@@ -59,5 +59,38 @@ $(function () {
         }
     }
 
+    //点击按钮或回车键发送消息
+    $('#sub').click(sendMsg);
+    $('#m').keyup((ev)=>{
+        if(ev.which ==13){
+            sendMsg();
+        }
+    })
+    //发送消息
+    function sendMsg() {
+        if($('#m').val()==''){
+            alert('请输入内容！');
+            return false;
+        }
+        socket.emit('sendMsg',{
+            msg:$('#m').val()
+        });
+        $('#m').val('');
+        return false;
+    }
 
+    //接收消息
+    socket.on('receiveMsg',(obj)=>{
+        $('#messages').append(`
+            <li class='${obj.side}'>
+          <img src="${obj.img}">
+          <div>
+            <span>${obj.name}</span>
+            <p>${obj.msg}</p>
+          </div>
+        </li>
+        `);
+        //滚动条总是在最底部
+        $('#messages').scrollTop($('#messages')[0].scrollHeight);
+    })
 })
